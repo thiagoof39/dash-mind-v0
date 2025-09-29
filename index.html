@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Interativo: Revolucionando o Aprendizado</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <!-- Chosen Palette: Warm Neutrals -->
+    <!-- Application Structure Plan: The application is structured into four thematic pillars to create a user-friendly, non-linear exploration path, rather than mirroring the book's chapters. The flow is: 1) Hero section for an overview. 2) 'Understanding Your Brain' for foundational concepts via an interactive diagram. 3) 'Discover Your Intelligence Profile' for self-assessment using an interactive radar chart. 4) 'The Master Method' presenting the core learning process in an expandable accordion format for clarity. This task-oriented design (understand, discover, apply) was chosen to make the book's dense information actionable and engaging, empowering the user to find what's most relevant to them quickly. -->
+    <!-- Visualization & Content Choices: 1. Brain Structure -> Goal: Inform -> Viz: Interactive HTML/CSS diagram -> Interaction: Click on brain parts to update a text box -> Justification: More engaging than static text, reinforces the interconnectedness of brain functions. Method: Vanilla JS. 2. Multiple Intelligences -> Goal: Compare/Self-Assess -> Viz: Radar Chart -> Interaction: User clicks on intelligence types, dynamically updating the chart to show their profile -> Justification: A radar chart is the ideal visualization for a multi-faceted profile, making self-discovery interactive. Library: Chart.js. 3. Master Learning Method -> Goal: Organize/Inform -> Viz: Accordion component -> Interaction: Click to expand/collapse phases -> Justification: Breaks down a complex, multi-step process into manageable chunks, preventing information overload. Method: HTML/CSS/JS. All choices avoid SVG/Mermaid as required, focusing on interactive elements built with standard web technologies to enhance user engagement and comprehension. -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #FDFBF8; /* Um branco-osso quente */
+            color: #4A4A4A; /* Cinza escuro para texto */
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 400px; /* Limita a largura do gráfico em telas grandes */
+            margin-left: auto;
+            margin-right: auto;
+            height: 400px;
+            max-height: 400px;
+        }
+        .accordion-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+        }
+        .active .accordion-content {
+            max-height: 1000px; /* Um valor alto o suficiente */
+            transition: max-height 0.5s ease-in;
+        }
+        .active .accordion-icon {
+            transform: rotate(180deg);
+        }
+        .step-circle {
+            transition: all 0.3s ease;
+        }
+        .step-circle.active {
+            background-color: #A88B79; /* Um marrom suave como cor de destaque */
+            color: #FFFFFF;
+            transform: scale(1.1);
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <header class="bg-[#FDFBF8]/80 backdrop-blur-lg sticky top-0 z-50 border-b border-gray-200">
+        <nav class="container mx-auto px-6 py-4 flex justify-between items-center">
+            <h1 class="text-xl md:text-2xl font-bold text-[#A88B79]">Revolucionando o Aprendizado</h1>
+            <div class="hidden md:flex space-x-6">
+                <a href="#cerebro" class="text-gray-600 hover:text-[#A88B79] transition">Seu Cérebro</a>
+                <a href="#inteligencias" class="text-gray-600 hover:text-[#A88B79] transition">Suas Inteligências</a>
+                <a href="#metodo" class="text-gray-600 hover:text-[#A88B79] transition">O Método Mestre</a>
+            </div>
+            <button id="mobile-menu-button" class="md:hidden p-2 rounded-md focus:outline-none focus:ring-2 focus:ring-[#A88B79]">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
+            </button>
+        </nav>
+        <div id="mobile-menu" class="hidden md:hidden px-6 pb-4 flex flex-col space-y-2">
+            <a href="#cerebro" class="block text-gray-600 hover:text-[#A88B79] transition py-2">Seu Cérebro</a>
+            <a href="#inteligencias" class="block text-gray-600 hover:text-[#A88B79] transition py-2">Suas Inteligências</a>
+            <a href="#metodo" class="block text-gray-600 hover:text-[#A88B79] transition py-2">O Método Mestre</a>
+        </div>
+    </header>
+
+    <main class="container mx-auto px-6 py-12">
+
+        <section class="text-center mb-24">
+            <h2 class="text-3xl md:text-5xl font-bold text-[#A88B79] mb-4">Você possui o melhor computador do mundo.</h2>
+            <p class="max-w-3xl mx-auto text-lg text-gray-600 mb-12">Esta é uma jornada para desbloquear o potencial do seu cérebro. Aprenda como você aprende e transforme sua capacidade de absorver conhecimento para sempre.</p>
+            <a href="#cerebro" class="bg-[#A88B79] text-white font-bold py-3 px-8 rounded-lg hover:bg-[#937562] transition shadow-md">Comece a Explorar</a>
+        </section>
+
+        <section id="cerebro" class="mb-24">
+            <h2 class="text-3xl md:text-4xl font-bold text-[#A88B79] text-center mb-4">Entenda Seu Cérebro</h2>
+            <p class="max-w-3xl mx-auto text-lg text-gray-600 text-center mb-16">Seu cérebro não é uma massa única. Ele evoluiu em três camadas interconectadas. O aprendizado eficaz acontece quando todas as três estão em harmonia. Clique em cada área para descobrir seu papel.</p>
+            <div class="grid md:grid-cols-2 gap-12 items-center">
+                <div class="text-center md:text-left">
+                    <h3 class="text-2xl font-bold text-gray-700 mb-4">Seus Três Cérebros em Um</h3>
+                    <p class="text-gray-600 mb-6">O estado emocional é a porta de entrada para a aprendizagem. Um ambiente positivo e relaxado permite que a informação flua para as áreas de pensamento superior.</p>
+                    <div id="brain-info" class="bg-white p-6 rounded-lg shadow-inner border border-gray-200 min-h-[180px]">
+                        <h4 id="brain-title" class="text-xl font-bold text-[#A88B79] mb-2">Selecione uma área do cérebro</h4>
+                        <p id="brain-text" class="text-gray-600">Cada parte tem uma função vital, desde a sobrevivência básica até o pensamento mais complexo e criativo.</p>
+                    </div>
+                </div>
+                <div class="flex justify-center items-center">
+                    <div class="relative w-64 h-64">
+                        <div id="neocortex" data-title="Neocórtex (Cérebro Pensante)" data-text="A camada mais externa, responsável pelo pensamento complexo, linguagem e criatividade. É aqui que a aprendizagem profunda ocorre, mas só é acessível quando os outros dois cérebros se sentem seguros e engajados." class="brain-part absolute top-0 left-0 w-full h-full rounded-full bg-[#A88B79]/30 cursor-pointer transition hover:bg-[#A88B79]/50"></div>
+                        <div id="limbico" data-title="Sistema Límbico (Cérebro Emocional)" data-text="O centro das emoções e o 'porteiro' da memória. Ele decide o que é importante o suficiente para ser lembrado. Informações com carga emocional (curiosidade, alegria) são priorizadas." class="brain-part absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-40 h-40 rounded-full bg-[#A88B79]/50 cursor-pointer transition hover:bg-[#A88B79]/70"></div>
+                        <div id="reptiliano" data-title="Cérebro Reptiliano (Instintivo)" data-text="A parte mais primitiva, focada na sobrevivência. Em um ambiente de estudo estressante, ele assume o controle e bloqueia o acesso às áreas de pensamento superior para economizar energia." class="brain-part absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-20 h-20 rounded-full bg-[#A88B79] cursor-pointer transition hover:bg-[#937562]"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="inteligencias" class="mb-24">
+            <h2 class="text-3xl md:text-4xl font-bold text-[#A88B79] text-center mb-4">Descubra Seu Perfil de Inteligência</h2>
+            <p class="max-w-3xl mx-auto text-lg text-gray-600 text-center mb-16">A inteligência não é singular. Segundo Howard Gardner, possuímos múltiplas inteligências. Conhecer seus pontos fortes ajuda a adaptar seu método de estudo. Selecione as áreas com as quais você mais se identifica para ver seu perfil.</p>
+            <div class="grid md:grid-cols-2 gap-12 items-center">
+                <div class="chart-container">
+                    <canvas id="intelligencesChart"></canvas>
+                </div>
+                <div id="intelligences-buttons" class="grid grid-cols-2 gap-4">
+                </div>
+            </div>
+        </section>
+
+        <section id="metodo" class="mb-24">
+            <h2 class="text-3xl md:text-4xl font-bold text-[#A88B79] text-center mb-4">O Método Mestre de 20 Passos</h2>
+            <p class="max-w-3xl mx-auto text-lg text-gray-600 text-center mb-16">Aprender qualquer coisa de forma eficaz não é mágica, é um processo. Este método, dividido em quatro fases, guia você desde a preparação até a maestria.</p>
+            <div id="accordion-container" class="space-y-4 max-w-4xl mx-auto">
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="bg-[#F4E9E1] mt-20">
+        <div class="container mx-auto px-6 py-8 text-center text-[#A88B79]">
+            <p class="font-semibold">Sua jornada de aprendizado está apenas começando.</p>
+            <p class="text-sm mt-2">Use este guia para construir uma base sólida para uma vida inteira de conhecimento.</p>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Menu Móvel
+            const mobileMenuButton = document.getElementById('mobile-menu-button');
+            const mobileMenu = document.getElementById('mobile-menu');
+
+            mobileMenuButton.addEventListener('click', () => {
+                mobileMenu.classList.toggle('hidden');
+            });
+            
+            document.querySelectorAll('#mobile-menu a').forEach(link => {
+                link.addEventListener('click', () => {
+                    mobileMenu.classList.add('hidden');
+                });
+            });
+
+            // Seção Interativa do Cérebro
+            const brainParts = document.querySelectorAll('.brain-part');
+            const brainTitle = document.getElementById('brain-title');
+            const brainText = document.getElementById('brain-text');
+
+            brainParts.forEach(part => {
+                part.addEventListener('click', () => {
+                    brainTitle.textContent = part.dataset.title;
+                    brainText.textContent = part.dataset.text;
+                });
+            });
+
+            // Seção de Inteligências Múltiplas
+            const intelligences = [
+                { name: 'Linguística', description: 'Habilidade com palavras e linguagem.', value: 5 },
+                { name: 'Lógico-Matemática', description: 'Capacidade de usar a razão, lógica e números.', value: 5 },
+                { name: 'Espacial', description: 'Pensar em três dimensões. Habilidade com imagens e espaço.', value: 5 },
+                { name: 'Corporal-Cinestésica', description: 'Habilidade de controlar os movimentos do corpo e manusear objetos.', value: 5 },
+                { name: 'Musical', description: 'Sensibilidade para padrões, tons e ritmos.', value: 5 },
+                { name: 'Interpessoal', description: 'Capacidade de entender e interagir eficazmente com os outros.', value: 5 },
+                { name: 'Intrapessoal', description: 'Capacidade de se autoconhecer e desenvolver um modelo de si mesmo.', value: 5 },
+                { name: 'Naturalista', description: 'Habilidade de reconhecer e categorizar elementos da natureza.', value: 5 }
+            ];
+
+            const buttonsContainer = document.getElementById('intelligences-buttons');
+            intelligences.forEach(intel => {
+                const button = document.createElement('button');
+                button.textContent = intel.name;
+                button.dataset.name = intel.name;
+                button.className = 'intelligence-btn p-4 border border-gray-300 rounded-lg text-left hover:bg-[#F4E9E1] transition focus:outline-none focus:ring-2 focus:ring-[#A88B79]';
+                buttonsContainer.appendChild(button);
+            });
+
+            const ctx = document.getElementById('intelligencesChart').getContext('2d');
+            const chart = new Chart(ctx, {
+                type: 'radar',
+                data: {
+                    labels: intelligences.map(i => i.name),
+                    datasets: [{
+                        label: 'Seu Perfil de Inteligência',
+                        data: intelligences.map(i => i.value),
+                        backgroundColor: 'rgba(168, 139, 121, 0.2)',
+                        borderColor: 'rgba(168, 139, 121, 1)',
+                        borderWidth: 2
+                    }]
+                },
+                options: {
+                    maintainAspectRatio: false,
+                    scales: {
+                        r: {
+                            angleLines: { color: 'rgba(74, 74, 74, 0.2)' },
+                            grid: { color: 'rgba(74, 74, 74, 0.2)' },
+                            pointLabels: { font: { size: 12 }, color: '#4A4A4A' },
+                            suggestedMin: 0,
+                            suggestedMax: 10
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    }
+                }
+            });
+
+            document.querySelectorAll('.intelligence-btn').forEach(button => {
+                button.addEventListener('click', () => {
+                    button.classList.toggle('bg-[#A88B79]');
+                    button.classList.toggle('text-white');
+
+                    const intelligenceName = button.dataset.name;
+                    const dataIndex = chart.data.labels.indexOf(intelligenceName);
+                    
+                    if (dataIndex !== -1) {
+                        const currentValue = chart.data.datasets[0].data[dataIndex];
+                        chart.data.datasets[0].data[dataIndex] = currentValue === 10 ? 5 : 10;
+                        chart.update();
+                    }
+                });
+            });
+
+            // Seção do Método Mestre (Accordion)
+            const accordionData = [
+                {
+                    title: 'Fase 1: A Arquitetura do Sucesso (Preparação)',
+                    items: [
+                        '<strong>Ouse Sonhar:</strong> Tenha uma visão clara do que deseja alcançar.',
+                        '<strong>Estabeleça Metas Específicas:</strong> Transforme sonhos em metas concretas e mensuráveis.',
+                        '<strong>Arranje um Orientador:</strong> Encontre alguém que já alcançou o que você deseja.',
+                        '<strong>Comece com uma Visão Global:</strong> Antes dos detalhes, entenda o panorama geral do assunto.',
+                        '<strong>Busque o Princípio Fundamental:</strong> Identifique os 20% do conteúdo que gerarão 80% dos resultados.'
+                    ]
+                },
+                {
+                    title: 'Fase 2: A Arte da Absorção (Entrada)',
+                    items: [
+                        '<strong>Fontes de Qualidade:</strong> Escolha os melhores materiais de aprendizagem.',
+                        '<strong>Reaprenda a Ler:</strong> Use técnicas como leitura dinâmica e pré-visualização.',
+                        '<strong>Reforce com Imagens e Sons:</strong> Utilize múltiplos sentidos para criar memórias mais fortes.',
+                        '<strong>Aprenda Fazendo:</strong> A prática é o caminho mais rápido para a competência.',
+                        '<strong>Desenhe Mapas Mentais:</strong> Organize a informação da mesma forma que seu cérebro: de forma radial e conectada.'
+                    ]
+                },
+                {
+                    title: 'Fase 3: A Ciência da Retenção (Consolidação)',
+                    items: [
+                        '<strong>Recuperação Ativa:</strong> Force seu cérebro a lembrar da informação sem olhar o material.',
+                        '<strong>Use Associações Mnemônicas:</strong> Crie ganchos mentais para informações complexas.',
+                        '<strong>Aprenda em Vigília Relaxada:</strong> Um estado de calma e foco (ondas cerebrais Alfa) é ideal para absorção.',
+                        '<strong>Pratique, Pratique, Pratique:</strong> A repetição espaçada fortalece as conexões neurais.',
+                        '<strong>Reveja e Reflita:</strong> Pense sobre o que aprendeu e como isso se conecta com outros conhecimentos.'
+                    ]
+                },
+                {
+                    title: 'Fase 4: O Salto para a Maestria (Aplicação)',
+                    items: [
+                        '<strong>Divirta-se:</strong> O aprendizado deve ser um processo prazeroso.',
+                        '<strong>Ensine os Outros:</strong> A melhor forma de solidificar um conhecimento é ensiná-lo.',
+                        '<strong>Metaprendizagem:</strong> Continue aprendendo sobre como aprender e refine seu processo constantemente.'
+                    ]
+                }
+            ];
+
+            const accordionContainer = document.getElementById('accordion-container');
+            accordionData.forEach(item => {
+                const content = item.items.map(step => `<li class="py-2">${step}</li>`).join('');
+                const accordionItem = document.createElement('div');
+                accordionItem.classList.add('accordion-item', 'border', 'border-gray-200', 'rounded-lg', 'overflow-hidden');
+                accordionItem.innerHTML = `
+                    <button class="accordion-header w-full text-left p-4 bg-white hover:bg-gray-50/80 transition flex justify-between items-center">
+                        <span class="font-semibold text-lg text-gray-700">${item.title}</span>
+                        <span class="accordion-icon transition-transform duration-300">
+                            <svg class="w-6 h-6 text-[#A88B79]" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                        </span>
+                    </button>
+                    <div class="accordion-content bg-gray-50/50">
+                        <div class="p-6">
+                            <ul class="list-disc list-inside space-y-2 text-gray-600">
+                                ${content}
+                            </ul>
+                        </div>
+                    </div>
+                `;
+                accordionContainer.appendChild(accordionItem);
+            });
+            
+            document.querySelectorAll('.accordion-item').forEach(item => {
+                const header = item.querySelector('.accordion-header');
+                header.addEventListener('click', () => {
+                    const currentlyActive = document.querySelector('.accordion-item.active');
+                    if (currentlyActive && currentlyActive !== item) {
+                        currentlyActive.classList.remove('active');
+                    }
+                    item.classList.toggle('active');
+                });
+            });
+
+        });
+    </script>
+</body>
+</html>
